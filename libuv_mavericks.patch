@@ -1,0 +1,42 @@
+diff --git a/src/unix/udp.c b/src/unix/udp.c
+index f6640fc7..846cf20d 100644
+--- a/src/unix/udp.c
++++ b/src/unix/udp.c
+@@ -176,13 +176,17 @@ static int uv__udp_recvmmsg(uv_udp_t* handle, uv_buf_t* buf) {
+     msgs[k].msg_len = 0;
+   }
+ 
+-#if defined(__APPLE__)
++#if defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+   do
+     nread = recvmsg_x(handle->io_watcher.fd, msgs, chunks, MSG_DONTWAIT);
+   while (nread == -1 && errno == EINTR);
+ #else
+   do
++#if defined(__APPLE__)
++    nread = recvmsg(handle->io_watcher.fd, msgs, chunks);
++#else
+     nread = recvmmsg(handle->io_watcher.fd, msgs, chunks, 0, NULL);
++#endif
+   while (nread == -1 && errno == EINTR);
+ #endif
+ 
+@@ -373,13 +377,17 @@ write_queue_drain:
+     h[pkts].msg_hdr.msg_iovlen = req->nbufs;
+   }
+ 
+-#if defined(__APPLE__)
++#if defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+   do
+     npkts = sendmsg_x(handle->io_watcher.fd, h, pkts, MSG_DONTWAIT);
+   while (npkts == -1 && errno == EINTR);
+ #else
+   do
++#if defined(__APPLE__)
++  npkts = sendmsg(handle->io_watcher.fd, h, pkts);
++#else
+     npkts = sendmmsg(handle->io_watcher.fd, h, pkts, 0);
++#endif
+   while (npkts == -1 && errno == EINTR);
+ #endif
+ 
