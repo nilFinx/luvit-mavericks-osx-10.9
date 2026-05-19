@@ -4,7 +4,7 @@ b.sh is the build configuration script.
 
 libuv_mavericks.patch is self descriptive.
 
-buvit.sh is for creating luvit and friends outside of luvi quickly.
+buvit.sh is for creating luvit and friends but not luvi quickly.
 
 # Notes
 
